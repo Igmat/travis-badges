@@ -1,0 +1,72 @@
+{
+    "name": "travis-badges",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Igmat/travis-badges.git"
+    },
+    "keywords": [
+        "travis",
+        "badges",
+        "github"
+    ],
+    "homepage": "https://github.com/Igmat/travis-badges#readme",
+    "author": "Ihor Chulinda <ichulinda@gmail.com> (https://github.com/Igmat)",
+    "bugs": {
+        "url": "https://github.com/Igmat/travis-badges/issues"
+    },
+    "scripts": {
+        "build": "tsc -p .",
+        "build:watch": "tsc -p . -w",
+
+        "clean": "rimraf dist/**/*",
+        "clean-build": "npm run clean && npm run build",
+
+        "prestart": "clean-build",
+        "start": "node dist/index.js",
+
+        "pretest": "npm run clean-build",
+        "test": "node scripts/tests.js",
+
+        "doc": "doctoc .",
+        "prepublish": "npm run clean-build"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "express": "^4.11.2",
+        "request": "^2.53.0",
+        "temp": "^0.8.1",
+        "webshot": "^0.15.3"
+    },
+    "devDependencies": {
+        "@types/node": "latest",
+        "@types/express": "latest",
+        "@types/request": "latest",
+        "@types/temp": "latest",
+        "typescript": "latest",
+        "tslint": "latest",
+
+        "jest": "latest",
+        "ts-jest": "latest",
+
+        "rimraf": "latest",
+        "doctoc": "latest"
+    },
+    "jest": {
+        "scriptPreprocessor": "<rootDir>/node_modules/ts-jest/preprocessor.js",
+        "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|js)$",
+        "coverageReporters": [
+            "text"
+        ],
+        "coverageDirectory": "test_coverage_dir",
+        "collectCoverageFrom": [
+            "src/**/*.ts"
+        ],
+        "moduleFileExtensions": [
+            "ts",
+            "js"
+        ]
+    }
+}
