@@ -40,7 +40,8 @@ app.get('/repos/(*)', (req, res) => {
         });
       }));
       res.status(200);
-      res.send(result.join(''));
+      res.contentType('image/svg+xml');
+      res.send(result[req.query && req.query.job || 0]);
     });
   });
 });
