@@ -14,7 +14,6 @@ app.get('/repos/(*)', (req, res) => {
   travis.repos(repo).get((err, repoResponse) => {
     let lastBuildId = repoResponse.branch.id;
     travis.builds(lastBuildId).get(async (err, buildResponse) => {
-      console.log(buildResponse);
       let result = await Promise.all((buildResponse.jobs as Array<any>).map((job) => {
         let colorscheme: 'brightgreen' | 'green' | 'yellow' | 'yellowgreen' | 'orange' | 'red' | 'blue' | 'grey' | 'gray' | 'lightgrey' | 'lightgray';
         switch (job.state) {
@@ -40,6 +39,9 @@ app.get('/repos/(*)', (req, res) => {
         });
       }));
       res.status(200);
+      res.header('Cache-Control', 'no-cache, private');
+      res.header('Pragma', 'no-cache');
+      res.header('Expires', new Date().toUTCString());
       res.contentType('image/svg+xml');
       res.send(result[req.query && req.query.job || 0]);
     });
