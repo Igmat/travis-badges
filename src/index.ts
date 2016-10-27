@@ -30,21 +30,25 @@ app.get('/repos/(*)', (req, res) => {
             colorscheme = 'gray';
             break;
         }
-        return new Promise((resolve: (value: string) => void) => {
+        return new Promise((resolve: (value: {svg: string, state: string}) => void) => {
           badge({ text: ['node v' + job.config.node_js, job.state], colorscheme, template: 'flat' },
             (svg, err) => {
-              resolve(svg);
+              resolve({
+                svg,
+                state: job.state
+              });
               // svg is a String of your badge.
             });
         });
       }));
+      let jobResult = result[req.query && req.query.job || 0];
       res.status(200);
       res.header('Cache-Control', 'no-cache, private');
       res.header('Pragma', 'no-cache');
-      res.header('Etag', lastBuildId.toString());
+      res.header('Etag', lastBuildId.toString() + jobResult.state);
       res.header('Expires', new Date().toUTCString());
       res.contentType('image/svg+xml');
-      res.send(result[req.query && req.query.job || 0]);
+      res.send(jobResult.svg);
     });
   });
 });
