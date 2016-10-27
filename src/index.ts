@@ -30,12 +30,15 @@ app.get('/repos/(*)', (req, res) => {
             colorscheme = 'gray';
             break;
         }
-        return new Promise((resolve: (value: {svg: string, state: string}) => void) => {
+        return new Promise((resolve: (value: {svg: string, state: string, lastModified: string}) => void) => {
           badge({ text: ['node v' + job.config.node_js, job.state], colorscheme, template: 'flat' },
             (svg, err) => {
               resolve({
                 svg,
-                state: job.state
+                state: job.state,
+                lastModified: (job.state === 'passed' || job.state === 'failed')
+                  ? new Date(job.finished_at).toUTCString()
+                  : new Date(job.started_at).toUTCString()
               });
               // svg is a String of your badge.
             });
@@ -45,8 +48,9 @@ app.get('/repos/(*)', (req, res) => {
       res.status(200);
       res.header('Cache-Control', 'no-cache, private');
       res.header('Pragma', 'no-cache');
-      res.header('Etag', lastBuildId.toString() + jobResult.state);
+      res.header('Etag', '"' + lastBuildId.toString() + jobResult.state + '"');
       res.header('Expires', new Date().toUTCString());
+      res.header('Last-Modified', jobResult.lastModified);
       res.contentType('image/svg+xml');
       res.send(jobResult.svg);
     });
